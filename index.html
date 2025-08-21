@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lukas Abegg (gelernter Schreiner) – Lifeplus Homepage</title>
+<style>
+body {font-family: Arial, sans-serif; margin:0; background:#f4f4f4; color:#333;}
+header {background:#009688; color:white; padding:40px 20px; text-align:center;}
+nav {background:#00796B; padding:12px; text-align:center;}
+nav a {color:white; margin:0 15px; text-decoration:none; font-weight:bold; cursor:pointer;}
+nav a:hover {text-decoration:underline;}
+section {padding:30px 20px; max-width:900px; margin:20px auto; background:white; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+h2 {color:#00796B;}
+footer {background:#333; color:white; text-align:center; padding:15px; margin-top:20px;}
+.button {display:inline-block; background:#009688; color:white; padding:12px 24px; margin-top:15px; text-decoration:none; border-radius:25px; font-weight:bold; cursor:pointer;}
+.button:hover {background:#00695C;}
+#loginBox, #memberContent {display:none; max-width:800px; margin:40px auto; background:white; padding:25px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.2);}
+input[type="password"], input[type="text"] {padding:10px; margin-top:10px; width:80%; border:1px solid #ccc; border-radius:8px;}
+.folder {border:1px solid #ccc; padding:10px; border-radius:8px; margin-top:15px;}
+.folder h3 {margin:5px 0;}
+.folder ul {list-style-type: disc; padding-left:20px;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Lukas Abegg (gelernter Schreiner)</h1>
+  <p>Lifeplus & Network Marketing – Gesundheit. Freiheit. Gemeinsam wachsen. Selber deine Zukunft gestalten.</p>
+</header>
+
+<nav>
+  <a onclick="scrollToSection('about')">Über mich</a>
+  <a onclick="scrollToSection('vorteile')">Vorteile</a>
+  <a onclick="scrollToSection('kontakt')">Kontakt</a>
+  <a onclick="showLogin()">🔒 Memberlogin</a>
+</nav>
+
+<section id="about">
+  <h2>Über mich</h2>
+  <p>Hallo, ich bin <strong>Lukas Abegg</strong>. Ich zeige dir, wie du mit <strong>Lifeplus</strong> dein Leben frei und unabhängig gestalten kannst.</p>
+</section>
+
+<section id="vorteile">
+  <h2>Warum Lifeplus & Network Marketing?</h2>
+  <ul>
+    <li>💚 Gesundheit, Vitalität und Lebensfreude</li>
+    <li>🌍 Freiheit – arbeiten von überall</li>
+    <li>🤝 Gemeinschaft – Teamwork & Unterstützung</li>
+    <li>💡 Wachstum – persönlich & finanziell</li>
+  </ul>
+  <a href="https://www.lifeplus.com" class="button" target="_blank">Mehr über Lifeplus</a>
+</section>
+
+<section id="kontakt">
+  <h2>Kontakt</h2>
+  <p>Email: <a href="mailto:lukaiter69@icloud.com">lukaiter69@icloud.com</a></p>
+  <p>Oder direkt über WhatsApp:</p>
+  <a href="https://wa.me/41787341351" class="button" target="_blank">Jetzt schreiben</a>
+</section>
+
+<!-- Login -->
+<div id="loginBox">
+  <h2>🔒 Memberlogin</h2>
+  <input type="password" id="passwordInput" placeholder="Passwort">
+  <br>
+  <button class="button" onclick="checkPassword()">Login</button>
+  <p id="error" style="color:red; display:none;">❌ Falsches Passwort!</p>
+</div>
+
+<!-- Memberbereich -->
+<div id="memberContent">
+  <h2>Willkommen im Memberbereich 🎉</h2>
+  <p>Hier kannst du Ordner erstellen und Inhalte hinzufügen.</p>
+  <input type="text" id="folderName" placeholder="Neuer Ordnername">
+  <button class="button" onclick="addFolder()">Ordner erstellen</button>
+
+  <div id="foldersContainer"></div>
+  <button class="button" onclick="logout()">Abmelden</button>
+</div>
+
+<footer>
+  <p>© 2025 – Lukas Abegg | Lifeplus Network Marketing</p>
+</footer>
+
+<script>
+function scrollToSection(id){document.getElementById(id).scrollIntoView({behavior:'smooth'});}
+function showLogin(){document.getElementById("loginBox").style.display="block"; document.getElementById("memberContent").style.display="none";}
+
+function checkPassword(){
+  const pw=document.getElementById("passwordInput").value;
+  if(pw==="Lifeplus69"){
+    document.getElementById("loginBox").style.display="none";
+    document.getElementById("memberContent").style.display="block";
+    loadFolders();
+  } else{
+    document.getElementById("error").style.display="block";
+  }
+}
+
+function logout(){
+  document.getElementById("memberContent").style.display="none";
+  document.getElementById("loginBox").style.display="block";
+  document.getElementById("passwordInput").value="";
+  document.getElementById("error").style.display="none";
+}
+
+// Memberbereich Ordner
+let folders=[];
+
+function saveFolders(){localStorage.setItem("memberFolders", JSON.stringify(folders));}
+
+function loadFolders(){
+  const data=localStorage.getItem("memberFolders");
+  if(data){folders=JSON.parse(data);} else {folders=[];}
+  renderFolders();
+}
+
+function addFolder(){
+  const name=document.getElementById("folderName").value.trim();
+  if(!name){alert("Ordnername eingeben!"); return;}
+  folders.push({name:name, items:[]});
+  document.getElementById("folderName").value="";
+  renderFolders();
+  saveFolders();
+}
+
+function addItem(index){
+  const item=prompt("Neues Item eingeben:");
+  if(item){folders[index].items.push(item); renderFolders(); saveFolders();}
+}
+
+function renderFolders(){
+  const container=document.getElementById("foldersContainer");
+  container.innerHTML="";
+  folders.forEach((f,i)=>{
+    const div=document.createElement("div");
+    div.className="folder";
+    div.innerHTML=`<h3>${f.name}</h3><ul>${f.items.map(it=>"<li>"+it+"</li>").join("")}</ul><button class="button" onclick="addItem(${i})">Inhalt hinzufügen</button>`;
+    container.appendChild(div);
+  });
+}
+</script>
+
+</body>
+</html>
